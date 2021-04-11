@@ -1,0 +1,10 @@
+try_files $fastcgi_script_name = 404;
+
+include fastcgi_params;
+
+fastcgi_pass			unix:/run/php/php-fpm.sock;
+fastcgi_index			index.php;
+fastcgi_buffers			8 16k;
+fastcgi_buffer_size		32k;
+fastcgi_hide_header     X-Powered-By;
+fastcgi_hide_header     X-CF-Powered-By;

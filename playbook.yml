@@ -1,0 +1,19 @@
+---
+- hosts: lxd_servers
+  become: yes
+  become_method: sudo
+  become_user: root
+  roles: ['lxd_server', 'lxd_containers']
+  tags:  ['prereq', 'lxd']
+
+- hosts: lxd_containers
+  roles: ['users']
+  tags:  ['users']
+
+- hosts: conf-management-dnsmasq
+  roles: ['dnsmasq']
+  tags:  ['dnsmasq']
+
+- hosts: conf-management-php
+  roles: ['php']
+  tags:  ['php']

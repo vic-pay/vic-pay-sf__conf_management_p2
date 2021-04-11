@@ -1,0 +1,22 @@
+---
+- name: disable systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+
+- name: set DNS
+  template: 
+    src:  "templates/resolv.conf.j2"
+    dest: "/etc/resolv.conf"
+
+- name: install dnsmasq package
+  apt:
+    name: ['dnsmasq']
+    state: 'present'
+
+- name: enable dnsmasq service 
+  systemd:
+    name: dnsmasq
+    state: started
+    enabled: true

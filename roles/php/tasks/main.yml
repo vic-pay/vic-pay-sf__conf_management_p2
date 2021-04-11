@@ -1,0 +1,22 @@
+---
+- name: make dir
+  file:
+    path:  /opt/nginx/ansible
+    state: directory
+    recurse: yes
+
+- name: install packages
+  apt:
+    name: ['nginx', 'php', 'php-cli', 'php-fpm']
+    state: 'present'
+
+- name: copy configs
+  template:
+    src:   "{{ item.src }}"
+    dest:  "{{ item.dest }}"
+  with_items: 
+    - { src: templates/index.php.j2,     dest: /opt/nginx/ansible/index.php }
+    - { src: templates/fast-cgi.conf.j2, dest: /etc/nginx/php_fastcgi.conf  }
+    - { src: templates/default.j2,       dest: /etc/nginx/sites-available/default }
+  notify: restart nginx
+  

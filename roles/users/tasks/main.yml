@@ -1,0 +1,33 @@
+---
+- name: Install packages
+  apt:
+    name: ['ssh']
+    state: 'present'
+
+- name: Make {{ group_name }} group
+  group:
+    name: '{{ group_name }}'
+    state: present
+
+- name: Make users
+  user:
+    name:  '{{ item }}'
+    group: '{{ group_name }}'
+    shell: /bin/bash
+    expires: -1
+  with_items: '{{ user_name }}'
+
+- name: Add ssh authorized key
+  authorized_key:
+    user: '{{ item }}'
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  with_items: '{{ user_name }}'
+
+- name: Allow {{ group_name }} to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%{{ group_name }}'
+    line: '%{{ group_name }} ALL=(ALL) NOPASSWD: ALL'
+    validate: visudo -cf %s
